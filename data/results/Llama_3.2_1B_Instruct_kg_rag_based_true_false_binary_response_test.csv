@@ -1,0 +1,31 @@
+question,label,llm_answer
+enhanced S-cone syndrome is not a vitreoretinal degeneration,False,"{{
+  ""answer"": ""False""
+}}"
+metronidazole treats crohn's disease,True,"{{
+  ""answer"": ""True""
+}}"
+KLEEFSTRA SYNDROME 1 is not associated with Gene EHMT1,False,"{
+  ""answer"": ""False""
+}"
+Juvenile polyposis syndrome associates Gene SMAD4,True,"{{
+  ""answer"": ""True""
+}}"
+Disease ontology identifier for congenital generalized lipodystrophy type 2 is DOID:10588,False,"{
+  ""answer"": ""False""
+}"
+Disease ontology identifier for Marfan syndrome is DOID:0060055,False,"{{
+  ""answer"": ""False""
+}}"
+cystic fibrosis is a respiratory system disorder,True,"{{
+  ""answer"": ""True""
+}}"
+alpha-Mannosidosis associates Gene MAN2B1,True,"{{
+  ""answer"": ""True""
+}}"
+Wolcott-Rallison syndrome associates Gene EIF2AK3,True,"{{
+  ""answer"": ""True""
+}}"
+Neurofibromatosis 2 is not associated with Gene NF2,False,"{{
+  ""answer"": ""False""
+}}"

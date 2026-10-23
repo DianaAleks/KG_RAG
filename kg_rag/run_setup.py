@@ -41,7 +41,7 @@ if user_input == "Y":
             if user_input_3 == "Y":
                 user_input_4 = input("Did you get access to use the model? Enter Y or N: ")
                 if user_input_4 == "Y":
-                    download_llama()
+                    download_llama(method='method-1')
                     print("Congratulations! Setup is completed.")
                 else:
                     print("Aborting!")

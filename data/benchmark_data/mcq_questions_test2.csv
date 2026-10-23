@@ -1,0 +1,3 @@
+disease_pair,correct_node,negative_samples,disease_1,disease_2,options_combined,text
+"('psoriasis', ""Takayasu's arteritis"")",HLA-B,"SHTN1, DTNB, BTBD9, SLC14A2",psoriasis,Takayasu's arteritis,"SHTN1, HLA-B,  SLC14A2,  BTBD9,  DTNB","Out of the given list, which Gene is associated with psoriasis and Takayasu's arteritis. Given list is: SHTN1, HLA-B,  SLC14A2,  BTBD9,  DTNB"
+"('psoriasis', 'myelodysplastic syndrome')",HLA-B,"GCKR, PKNOX2, NOD2, CHEK2",psoriasis,myelodysplastic syndrome," NOD2,  CHEK2, HLA-B, GCKR,  PKNOX2","Out of the given list, which Gene is associated with psoriasis and myelodysplastic syndrome. Given list is:  NOD2,  CHEK2, HLA-B, GCKR,  PKNOX2"

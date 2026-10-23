@@ -6,9 +6,11 @@ Before running this script, make sure to configure the filepaths in config.yaml 
 
 from langchain import PromptTemplate, LLMChain
 from kg_rag.utility import *
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
-
-QUESTION_PATH = config_data["MCQ_PATH"]
+#QUESTION_PATH = config_data["MCQ_PATH"]
+QUESTION_PATH = "/workspaces/KG_RAG/data/benchmark_data/mcq_questions_test2.csv"
 SYSTEM_PROMPT = system_prompts["MCQ_QUESTION"]
 CONTEXT_VOLUME = int(config_data["CONTEXT_VOLUME"])
 QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD = float(config_data["QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD"])
@@ -22,8 +24,8 @@ MODEL_NAME = config_data["LLAMA_MODEL_NAME"]
 BRANCH_NAME = config_data["LLAMA_MODEL_BRANCH"]
 CACHE_DIR = config_data["LLM_CACHE_DIR"]
 
-save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_kg_rag_based_mcq_from_monarch_and_robokop_response.csv"
-
+#save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_kg_rag_based_mcq_from_monarch_and_robokop_response.csv"
+save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_kg_rag_based_mcq_from_monarch_and_robokop_response_test.csv"
 
 INSTRUCTION = "Context:\n\n{context} \n\nQuestion: {question}"
 
@@ -34,22 +36,108 @@ edge_evidence = False
 
 
 
-def main():    
+
+def main():
     start_time = time.time()
-    llm = llama_model(MODEL_NAME, BRANCH_NAME, CACHE_DIR)               
-    template = get_prompt(INSTRUCTION, SYSTEM_PROMPT)
-    prompt = PromptTemplate(template=template, input_variables=["context", "question"])
-    llm_chain = LLMChain(prompt=prompt, llm=llm)    
-    question_df = pd.read_csv(QUESTION_PATH)  
+
+    # Use direct Transformers generation for Llama 3.2 1B.
+    if MODEL_NAME == "meta-llama/Llama-3.2-1B-Instruct":
+        tokenizer = AutoTokenizer.from_pretrained(
+            MODEL_NAME,
+            revision=BRANCH_NAME,
+            cache_dir=CACHE_DIR
+        )
+        model = AutoModelForCausalLM.from_pretrained(
+            MODEL_NAME,
+            revision=BRANCH_NAME,
+            cache_dir=CACHE_DIR,
+            torch_dtype=torch.float32
+        )
+        model.eval()
+    else:
+        # Preserve the original pipeline for other models.
+        llm = llama_model(MODEL_NAME, BRANCH_NAME, CACHE_DIR)
+        template = get_prompt(INSTRUCTION, SYSTEM_PROMPT)
+        prompt = PromptTemplate(
+            template=template,
+            input_variables=["context", "question"]
+        )
+        llm_chain = LLMChain(prompt=prompt, llm=llm)
+
+    question_df = pd.read_csv(QUESTION_PATH)
     answer_list = []
+
     for index, row in question_df.iterrows():
         question = row["text"]
-        context = retrieve_context(question, vectorstore, embedding_function_for_context_retrieval, node_context_df, CONTEXT_VOLUME, QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD, QUESTION_VS_CONTEXT_MINIMUM_SIMILARITY, edge_evidence)
-        output = llm_chain.run(context=context, question=question)
+
+        context = retrieve_context(
+            question,
+            vectorstore,
+            embedding_function_for_context_retrieval,
+            node_context_df,
+            CONTEXT_VOLUME,
+            QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD,
+            QUESTION_VS_CONTEXT_MINIMUM_SIMILARITY,
+            edge_evidence,
+            api=False,
+            local_entity_extraction=True
+        )
+
+        if MODEL_NAME == "meta-llama/Llama-3.2-1B-Instruct":
+            messages = [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {
+                    "role": "user",
+                    "content": INSTRUCTION.format(
+                        context=context,
+                        question=question
+                    )
+                }
+            ]
+
+            inputs = tokenizer.apply_chat_template(
+                messages,
+                add_generation_prompt=True,
+                return_tensors="pt",
+                return_dict=True
+            )
+            inputs = {
+                key: value.to(model.device)
+                for key, value in inputs.items()
+            }
+
+            with torch.no_grad():
+                outputs = model.generate(
+                    **inputs,
+                    max_new_tokens=32,
+                    do_sample=False,
+                    temperature=None,
+                    top_p=None,
+                    use_cache=False,
+                    pad_token_id=tokenizer.eos_token_id
+                )
+
+            new_tokens = outputs[0, inputs["input_ids"].shape[-1]:]
+            output = tokenizer.decode(
+                new_tokens,
+                skip_special_tokens=True
+            ).strip()
+        else:
+            output = llm_chain.run(context=context, question=question)
+
+        print(f"Question {index + 1}: {output}")
         answer_list.append((row["text"], row["correct_node"], output))
-    answer_df = pd.DataFrame(answer_list, columns=["question", "correct_answer", "llm_answer"])
-    answer_df.to_csv(os.path.join(SAVE_PATH, save_name), index=False, header=True) 
-    print("Completed in {} min".format((time.time()-start_time)/60))
+
+    answer_df = pd.DataFrame(
+        answer_list,
+        columns=["question", "correct_answer", "llm_answer"]
+    )
+    answer_df.to_csv(
+        os.path.join(SAVE_PATH, save_name),
+        index=False,
+        header=True
+    )
+    print("Completed in {} min".format((time.time() - start_time) / 60))
 
 
 

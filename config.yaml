@@ -26,7 +26,8 @@ GPT_CONFIG_FILE : '/workspaces/KG_RAG/.gpt_config.env'
 GPT_API_TYPE : 'open_ai'
 
 # Llama model name (Refer Hugging face to get the correct name for the model version you would like to use, also make sure you have the right permission to use the model)
-LLAMA_MODEL_NAME : 'meta-llama/Llama-2-13b-chat-hf'
+#LLAMA_MODEL_NAME : 'meta-llama/Llama-2-13b-chat-hf'
+LLAMA_MODEL_NAME : 'meta-llama/Llama-3.2-1B-Instruct'
 LLAMA_MODEL_BRANCH : 'main'
 
 # Path for caching LLM model files (When the model gets downloaded from hugging face, it will be saved in this path)

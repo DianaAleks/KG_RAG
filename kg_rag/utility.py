@@ -144,13 +144,14 @@ def get_prompt(instruction, new_system_prompt):
     return prompt_template
 
 def llama_model(model_name, branch_name, cache_dir, temperature=0, top_p=1, max_new_tokens=512, stream=False, method='method-1'):
+    is_llama32 = model_name == "meta-llama/Llama-3.2-1B-Instruct"
     if method == 'method-1':
         tokenizer = AutoTokenizer.from_pretrained(model_name,
                                                  revision=branch_name,
                                                  cache_dir=cache_dir)
         model = AutoModelForCausalLM.from_pretrained(model_name,                                             
                                             device_map='auto',
-                                            torch_dtype=torch.float16,
+                                            torch_dtype=torch.float32,
                                             revision=branch_name,
                                             cache_dir=cache_dir
                                             )
@@ -162,29 +163,29 @@ def llama_model(model_name, branch_name, cache_dir, temperature=0, top_p=1, max_
                                                                 legacy=False)
         model = transformers.LlamaForCausalLM.from_pretrained(model_name, 
                                                               device_map='auto', 
-                                                              torch_dtype=torch.float16, 
+                                                              torch_dtype=torch.float32, 
                                                               revision=branch_name, 
                                                               cache_dir=cache_dir)        
     if not stream:
         pipe = pipeline("text-generation",
                     model = model,
                     tokenizer = tokenizer,
-                    torch_dtype = torch.bfloat16,
+                    torch_dtype = torch.float32,
                     device_map = "auto",
                     max_new_tokens = max_new_tokens,
-                    do_sample = True
-                    )
+                    do_sample = True,
+                    **({"return_full_text": False} if is_llama32 else {}))
     else:
         streamer = TextStreamer(tokenizer)
         pipe = pipeline("text-generation",
                     model = model,
                     tokenizer = tokenizer,
-                    torch_dtype = torch.bfloat16,
+                    torch_dtype = torch.float32,
                     device_map = "auto",
                     max_new_tokens = max_new_tokens,
                     do_sample = True,
-                    streamer=streamer
-                    )        
+                    streamer=streamer,
+                    **({"return_full_text": False} if is_llama32 else {}))
     llm = HuggingFacePipeline(pipeline = pipe,
                               model_kwargs = {"temperature":temperature, "top_p":top_p})
     return llm
@@ -249,7 +250,21 @@ def disease_entity_extractor_v2(text):
         return entity_dict["Diseases"]
     except:
         return None
-    
+
+def disease_entity_extractor_local(text, node_context_df):
+    question = text.casefold()
+    node_names = node_context_df["node_name"].dropna().astype(str).unique()
+
+    # Match known node names that appear directly in the question.
+    entities = [
+        name for name in node_names
+        if name.strip() and name.casefold() in question
+    ]
+
+    # Prefer longer matches when names overlap.
+    entities = sorted(entities, key=len, reverse=True)
+
+    return entities if entities else None
 
 def load_sentence_transformer(sentence_embedding_model):
     return SentenceTransformerEmbeddings(model_name=sentence_embedding_model)
@@ -258,8 +273,11 @@ def load_chroma(vector_db_path, sentence_embedding_model):
     embedding_function = load_sentence_transformer(sentence_embedding_model)
     return Chroma(persist_directory=vector_db_path, embedding_function=embedding_function)
 
-def retrieve_context(question, vectorstore, embedding_function, node_context_df, context_volume, context_sim_threshold, context_sim_min_threshold, edge_evidence, api=True):
-    entities = disease_entity_extractor_v2(question)
+def retrieve_context(question, vectorstore, embedding_function, node_context_df, context_volume, context_sim_threshold, context_sim_min_threshold, edge_evidence, api=True, local_entity_extraction=False):
+    if local_entity_extraction:
+        entities = disease_entity_extractor_local(question, node_context_df)
+    else:
+        entities = disease_entity_extractor_v2(question)
     node_hits = []
     if entities:
         max_number_of_high_similarity_context_per_node = int(context_volume/len(entities))
