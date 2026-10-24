@@ -2,8 +2,8 @@ from langchain import PromptTemplate, LLMChain
 from kg_rag.utility import *
 import torch
 
-QUESTION_PATH = config_data["MCQ_PATH"]
-#QUESTION_PATH = "/workspaces/KG_RAG/data/benchmark_data/mcq_questions_test2.csv"
+#QUESTION_PATH = config_data["MCQ_PATH"]
+QUESTION_PATH = "data/benchmark_data/mcq_questions_test2.csv"
 SYSTEM_PROMPT = system_prompts["MCQ_QUESTION_PROMPT_BASED"]
 SAVE_PATH = config_data["SAVE_RESULTS_PATH"]
 MODEL_NAME = config_data["LLAMA_MODEL_NAME"]
@@ -12,8 +12,8 @@ CACHE_DIR = config_data["LLM_CACHE_DIR"]
 
 
 
-save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_prompt_based_two_hop_mcq_from_monarch_and_robokop_response.csv"
-#save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_prompt_based_two_hop_mcq_from_monarch_and_robokop_response_test.csv"
+#save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_prompt_based_two_hop_mcq_from_monarch_and_robokop_response.csv"
+save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_prompt_based_two_hop_mcq_from_monarch_and_robokop_response_test.csv"
 
 INSTRUCTION = "Question: {question}"
 

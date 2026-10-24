@@ -10,7 +10,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 #QUESTION_PATH = config_data["MCQ_PATH"]
-QUESTION_PATH = "/workspaces/KG_RAG/data/benchmark_data/mcq_questions_test2.csv"
+QUESTION_PATH = "data/benchmark_data/mcq_questions_test2.csv"
 SYSTEM_PROMPT = system_prompts["MCQ_QUESTION"]
 CONTEXT_VOLUME = int(config_data["CONTEXT_VOLUME"])
 QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD = float(config_data["QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD"])

@@ -11,7 +11,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 #QUESTION_PATH = config_data["TRUE_FALSE_PATH"]
-QUESTION_PATH = "/workspaces/KG_RAG/data/benchmark_data/true_false_questions_test10.csv"
+QUESTION_PATH = "data/benchmark_data/true_false_questions_test2.csv"
 SYSTEM_PROMPT = system_prompts["TRUE_FALSE_QUESTION"]
 QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD = float(config_data["QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD"])
 QUESTION_VS_CONTEXT_MINIMUM_SIMILARITY = float(config_data["QUESTION_VS_CONTEXT_MINIMUM_SIMILARITY"])
