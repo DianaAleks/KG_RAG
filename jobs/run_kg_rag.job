@@ -1,0 +1,22 @@
+#!/bin/bash
+#SBATCH --job-name=kg_rag_generation
+#SBATCH --output=kg_rag_generation.out
+#SBATCH --error=kg_rag_generation.err
+#SBATCH --cpus-per-task=4
+#SBATCH --nodes=1
+#SBATCH --time=00:20:00
+#SBATCH --gres=gpu:a30:1
+#SBATCH --mem=32G
+#SBATCH --partition=scavenge
+
+module load GCCcore/13.3.0
+
+CONDA_ROOT=/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64
+source "$CONDA_ROOT/etc/profile.d/conda.sh"
+conda activate "$CONDA_ROOT/envs/kg_rag_clean"
+
+cd /home/s25431/KG_RAG
+
+export HF_TOKEN="$(cat "$HOME/.huggingface_token")"
+
+python3 -u -m kg_rag.rag_based_generation.Llama.run_true_false_generation

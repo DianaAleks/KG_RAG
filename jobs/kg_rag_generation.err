@@ -1,0 +1,73 @@
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [01:22<02:44, 82.24s/it]Loading checkpoint shards:  67%|██████▋   | 2/3 [01:24<00:35, 35.06s/it]Loading checkpoint shards: 100%|██████████| 3/3 [01:25<00:00, 19.57s/it]Loading checkpoint shards: 100%|██████████| 3/3 [01:25<00:00, 28.47s/it]
+/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/utils/hub.py:374: FutureWarning: The `use_auth_token` argument is deprecated and will be removed in v5 of Transformers.
+  warnings.warn(
+Traceback (most recent call last):
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/home/s25431/KG_RAG/kg_rag/rag_based_generation/Llama/run_true_false_generation.py", line 140, in <module>
+    main()
+  File "/home/s25431/KG_RAG/kg_rag/rag_based_generation/Llama/run_true_false_generation.py", line 121, in main
+    output = llm_chain.run(context=context, question=question)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/langchain/chains/base.py", line 492, in run
+    return self(kwargs, callbacks=callbacks, tags=tags, metadata=metadata)[
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/langchain/chains/base.py", line 292, in __call__
+    raise e
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/langchain/chains/base.py", line 286, in __call__
+    self._call(inputs, run_manager=run_manager)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/langchain/chains/llm.py", line 93, in _call
+    response = self.generate([inputs], run_manager=run_manager)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/langchain/chains/llm.py", line 103, in generate
+    return self.llm.generate_prompt(
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/langchain/llms/base.py", line 504, in generate_prompt
+    return self.generate(prompt_strings, stop=stop, callbacks=callbacks, **kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/langchain/llms/base.py", line 653, in generate
+    output = self._generate_helper(
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/langchain/llms/base.py", line 541, in _generate_helper
+    raise e
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/langchain/llms/base.py", line 528, in _generate_helper
+    self._generate(
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/langchain/llms/base.py", line 1048, in _generate
+    self._call(prompt, stop=stop, run_manager=run_manager, **kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/langchain/llms/huggingface_pipeline.py", line 167, in _call
+    response = self.pipeline(prompt)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/pipelines/text_generation.py", line 205, in __call__
+    return super().__call__(text_inputs, **kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/pipelines/base.py", line 1140, in __call__
+    return self.run_single(inputs, preprocess_params, forward_params, postprocess_params)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/pipelines/base.py", line 1147, in run_single
+    model_outputs = self.forward(model_inputs, **forward_params)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/pipelines/base.py", line 1046, in forward
+    model_outputs = self._forward(model_inputs, **forward_params)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/pipelines/text_generation.py", line 268, in _forward
+    generated_sequence = self.model.generate(input_ids=input_ids, attention_mask=attention_mask, **generate_kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/generation/utils.py", line 1648, in generate
+    return self.sample(
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/generation/utils.py", line 2730, in sample
+    outputs = self(
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/accelerate/hooks.py", line 165, in new_forward
+    output = old_forward(*args, **kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 820, in forward
+    outputs = self.model(
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 708, in forward
+    layer_outputs = decoder_layer(
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/accelerate/hooks.py", line 165, in new_forward
+    output = old_forward(*args, **kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 424, in forward
+    hidden_states, self_attn_weights, present_key_value = self.self_attn(
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/accelerate/hooks.py", line 165, in new_forward
+    output = old_forward(*args, **kwargs)
+  File "/home/s25431/MY_OWN_MINICONDA/Miniconda3-py310_26.9.4-0-Linux-x86_64/envs/kg_rag_clean/lib/python3.10/site-packages/transformers/models/llama/modeling_llama.py", line 362, in forward
+    attn_weights = nn.functional.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 424.00 MiB (GPU 0; 10.90 GiB total capacity; 10.56 GiB already allocated; 81.38 MiB free; 10.66 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF

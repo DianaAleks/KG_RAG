@@ -145,32 +145,37 @@ def get_prompt(instruction, new_system_prompt):
 
 def llama_model(model_name, branch_name, cache_dir, temperature=0, top_p=1, max_new_tokens=512, stream=False, method='method-1'):
     is_llama32 = model_name == "meta-llama/Llama-3.2-1B-Instruct"
+    hf_token = os.environ["HF_TOKEN"]
     if method == 'method-1':
         tokenizer = AutoTokenizer.from_pretrained(model_name,
                                                  revision=branch_name,
-                                                 cache_dir=cache_dir)
+                                                 cache_dir=cache_dir, 
+						 token=hf_token)
         model = AutoModelForCausalLM.from_pretrained(model_name,                                             
                                             device_map='auto',
-                                            torch_dtype=torch.float32,
+                                            torch_dtype=torch.float16,
                                             revision=branch_name,
-                                            cache_dir=cache_dir
+                                            cache_dir=cache_dir, 
+					    token=hf_token
                                             )
     elif method == 'method-2':
         import transformers
         tokenizer = transformers.LlamaTokenizer.from_pretrained(model_name, 
                                                                 revision=branch_name, 
                                                                 cache_dir=cache_dir, 
-                                                                legacy=False)
+                                                                legacy=False, 
+								token=hf_token)
         model = transformers.LlamaForCausalLM.from_pretrained(model_name, 
                                                               device_map='auto', 
-                                                              torch_dtype=torch.float32, 
+                                                              torch_dtype=torch.float16, 
                                                               revision=branch_name, 
-                                                              cache_dir=cache_dir)        
+                                                              cache_dir=cache_dir, 
+							      token=hf_token)        
     if not stream:
         pipe = pipeline("text-generation",
                     model = model,
                     tokenizer = tokenizer,
-                    torch_dtype = torch.float32,
+                    torch_dtype = torch.bfloat16,
                     device_map = "auto",
                     max_new_tokens = max_new_tokens,
                     do_sample = True,
@@ -180,7 +185,7 @@ def llama_model(model_name, branch_name, cache_dir, temperature=0, top_p=1, max_
         pipe = pipeline("text-generation",
                     model = model,
                     tokenizer = tokenizer,
-                    torch_dtype = torch.float32,
+                    torch_dtype = torch.bfloat16,
                     device_map = "auto",
                     max_new_tokens = max_new_tokens,
                     do_sample = True,

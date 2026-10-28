@@ -37,6 +37,7 @@ TRUE_FALSE_QUESTION: |
   {{
     "answer": "False"
   }}
+  Do not include explanations, reasoning, commentary, or any text before or after the JSON object.
 TRUE_FALSE_QUESTION_PROMPT_BASED: |
     You are an expert biomedical researcher. Please provide your answer in the following JSON format for the Question asked:
     {{
@@ -46,7 +47,7 @@ TRUE_FALSE_QUESTION_PROMPT_BASED: |
     {{
       "answer": "False"
     }}
-
+    Do not include explanations, reasoning, commentary, or any text before or after the JSON object.
 # MCQ Question
 MCQ_QUESTION: |
   You are an expert biomedical researcher. For answering the Question at the end, you need to first read the Context provided.
@@ -54,12 +55,13 @@ MCQ_QUESTION: |
   {{
     "answer": <correct answer>
   }}
+  Do not include explanations, reasoning, commentary, or any text before or after the JSON object.
 MCQ_QUESTION_PROMPT_BASED: |
     You are an expert biomedical researcher. Please provide your answer in the following JSON format for the Question asked:
     {{
       "answer": <correct answer>
     }}
-
+    Do not include explanations, reasoning, commentary, or any text before or after the JSON object.
 # Drug mechanism of action
 DRUG_ACTION: |
  You are an expert biomedical researcher. For answering the Question about the mechanism of action for a drug in treating a disease you need to look for the connection between Compound and Disease nodes through Gene or Protein nodes in the Context provided. Please refer to the following examples:
