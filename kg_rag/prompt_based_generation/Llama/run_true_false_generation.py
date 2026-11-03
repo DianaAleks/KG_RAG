@@ -2,6 +2,7 @@ from langchain import PromptTemplate, LLMChain
 from kg_rag.utility import *
 
 QUESTION_PATH = config_data["TRUE_FALSE_PATH"]
+#QUESTION_PATH = "data/benchmark_data/true_false_questions2.csv"
 SYSTEM_PROMPT = system_prompts["TRUE_FALSE_QUESTION_PROMPT_BASED"]
 SAVE_PATH = config_data["SAVE_RESULTS_PATH"]
 MODEL_NAME = config_data["LLAMA_MODEL_NAME"]
@@ -12,7 +13,7 @@ CACHE_DIR = config_data["LLM_CACHE_DIR"]
 INSTRUCTION = "Question: {question}"
 
 save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_prompt_based_one_hop_true_false_binary_response.csv"
-
+#save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_prompt_based_one_hop_true_false_binary_response_test.csv"
 def main():
     start_time = time.time()
     llm = llama_model(MODEL_NAME, BRANCH_NAME, CACHE_DIR)

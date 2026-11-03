@@ -9,6 +9,7 @@ from kg_rag.utility import *
 
 
 QUESTION_PATH = config_data["MCQ_PATH"]
+#QUESTION_PATH = "data/benchmark_data/mcq_questions2.csv"
 SYSTEM_PROMPT = system_prompts["MCQ_QUESTION"]
 CONTEXT_VOLUME = int(config_data["CONTEXT_VOLUME"])
 QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD = float(config_data["QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD"])
@@ -23,7 +24,7 @@ BRANCH_NAME = config_data["LLAMA_MODEL_BRANCH"]
 CACHE_DIR = config_data["LLM_CACHE_DIR"]
 
 save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_kg_rag_based_mcq_from_monarch_and_robokop_response.csv"
-
+#save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_kg_rag_based_mcq_from_monarch_and_robokop_response_test.csv"
 
 INSTRUCTION = "Context:\n\n{context} \n\nQuestion: {question}"
 

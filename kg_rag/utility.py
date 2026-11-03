@@ -144,27 +144,31 @@ def get_prompt(instruction, new_system_prompt):
     return prompt_template
 
 def llama_model(model_name, branch_name, cache_dir, temperature=0, top_p=1, max_new_tokens=512, stream=False, method='method-1'):
+    hf_token = os.environ["HF_TOKEN"]
     if method == 'method-1':
         tokenizer = AutoTokenizer.from_pretrained(model_name,
                                                  revision=branch_name,
-                                                 cache_dir=cache_dir)
+                                                 cache_dir=cache_dir,
+						 token=hf_token)
         model = AutoModelForCausalLM.from_pretrained(model_name,                                             
                                             device_map='auto',
                                             torch_dtype=torch.float16,
                                             revision=branch_name,
-                                            cache_dir=cache_dir
-                                            )
+                                            cache_dir=cache_dir,
+                                            token=hf_token)
     elif method == 'method-2':
         import transformers
         tokenizer = transformers.LlamaTokenizer.from_pretrained(model_name, 
                                                                 revision=branch_name, 
                                                                 cache_dir=cache_dir, 
-                                                                legacy=False)
+                                                                legacy=False,
+								token=hf_token)
         model = transformers.LlamaForCausalLM.from_pretrained(model_name, 
                                                               device_map='auto', 
                                                               torch_dtype=torch.float16, 
                                                               revision=branch_name, 
-                                                              cache_dir=cache_dir)        
+                                                              cache_dir=cache_dir,
+							      token=hf_token)        
     if not stream:
         pipe = pipeline("text-generation",
                     model = model,
@@ -239,7 +243,7 @@ def disease_entity_extractor(text):
         return entity_dict["Diseases"]
     except:
         return None
-    
+"""
 def disease_entity_extractor_v2(text):
     chat_model_id, chat_deployment_id = get_gpt35()
     prompt_updated = system_prompts["DISEASE_ENTITY_EXTRACTION"] + "\n" + "Sentence : " + text
@@ -249,7 +253,16 @@ def disease_entity_extractor_v2(text):
         return entity_dict["Diseases"]
     except:
         return None
-    
+"""
+def disease_entity_extractor_v2(text, node_context_df):
+    question = text.casefold()
+    node_names = node_context_df["node_name"].dropna().astype(str).unique()
+
+    # Match known node names that appear directly in the question.
+    entities = [
+        name for name in node_names
+        if name.strip() and name.casefold() in question
+    ]    
 
 def load_sentence_transformer(sentence_embedding_model):
     return SentenceTransformerEmbeddings(model_name=sentence_embedding_model)
@@ -259,7 +272,7 @@ def load_chroma(vector_db_path, sentence_embedding_model):
     return Chroma(persist_directory=vector_db_path, embedding_function=embedding_function)
 
 def retrieve_context(question, vectorstore, embedding_function, node_context_df, context_volume, context_sim_threshold, context_sim_min_threshold, edge_evidence, api=True):
-    entities = disease_entity_extractor_v2(question)
+    entities = disease_entity_extractor_v2(question, node_context_df)
     node_hits = []
     if entities:
         max_number_of_high_similarity_context_per_node = int(context_volume/len(entities))
@@ -326,7 +339,7 @@ def interactive(question, vectorstore, node_context_df, embedding_function_for_c
     print(" ")
     input("Press enter for Step 1 - Disease entity extraction using GPT-3.5-Turbo")
     print("Processing ...")
-    entities = disease_entity_extractor_v2(question)
+    entities = disease_entity_extractor_v2(question, node_context_df)
     max_number_of_high_similarity_context_per_node = int(config_data["CONTEXT_VOLUME"]/len(entities))
     print("Extracted entity from the prompt = '{}'".format(", ".join(entities)))
     print(" ")

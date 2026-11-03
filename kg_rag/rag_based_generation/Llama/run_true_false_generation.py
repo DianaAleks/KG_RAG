@@ -10,6 +10,7 @@ import sys
 
 
 QUESTION_PATH = config_data["TRUE_FALSE_PATH"]
+#QUESTION_PATH = "data/benchmark_data/true_false_questions2.csv"
 SYSTEM_PROMPT = system_prompts["TRUE_FALSE_QUESTION"]
 QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD = float(config_data["QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD"])
 QUESTION_VS_CONTEXT_MINIMUM_SIMILARITY = float(config_data["QUESTION_VS_CONTEXT_MINIMUM_SIMILARITY"])
@@ -25,7 +26,7 @@ CONTEXT_VOLUME = 100
 edge_evidence = False
 
 save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_kg_rag_based_true_false_binary_response.csv"
-
+#save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_kg_rag_based_true_false_binary_response_test.csv"
 
 INSTRUCTION = "Context:\n\n{context} \n\nQuestion: {question}"
 
