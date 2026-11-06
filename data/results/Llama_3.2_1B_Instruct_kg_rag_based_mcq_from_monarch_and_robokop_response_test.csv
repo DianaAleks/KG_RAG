@@ -1,0 +1,7 @@
+question,correct_answer,llm_answer
+"Out of the given list, which Gene is associated with inflammatory bowel disease and ulcerative colitis. Given list is:  GATA3,  IL10,  HOXD3, IL23R, TNFSF15",IL23R,"{
+  ""answer"": ""IL10""
+}"
+"Out of the given list, which Gene is associated with inflammatory bowel disease and Crohn's disease. Given list is:  TNRC6B,  ARMS2, RORA,  MORC4, IL23R",IL23R,"{
+  ""answer"": ""TNRC6B""
+}"

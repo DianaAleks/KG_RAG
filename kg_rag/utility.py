@@ -19,6 +19,7 @@ from kg_rag.config_loader import *
 import ast
 import requests
 
+
 memory = Memory("cachegpt", verbose=0)
 
 # Config openai library

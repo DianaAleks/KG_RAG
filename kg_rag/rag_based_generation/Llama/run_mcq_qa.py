@@ -1,5 +1,6 @@
+
 '''
-This script takes the MCQ style questions from the csv file and save the result as another csv file. 
+This script takes the MCQ style questions from the csv file and save the result as another csv file.
 This script makes use of Llama model.
 Before running this script, make sure to configure the filepaths in config.yaml file.
 '''
@@ -29,24 +30,35 @@ save_name = "_".join(MODEL_NAME.split("/")[-1].split("-"))+"_kg_rag_based_mcq_fr
 
 INSTRUCTION = "Context:\n\n{context} \n\nQuestion: {question}"
 
+print("[SETUP] Loading Chroma vector store...", flush=True)
 vectorstore = load_chroma(VECTOR_DB_PATH, SENTENCE_EMBEDDING_MODEL_FOR_NODE_RETRIEVAL)
+print("[SETUP] Chroma vector store loaded.", flush=True)
+
+print("[SETUP] Loading context embedding model...", flush=True)
 embedding_function_for_context_retrieval = load_sentence_transformer(SENTENCE_EMBEDDING_MODEL_FOR_CONTEXT_RETRIEVAL)
+print("[SETUP] Context embedding model loaded.", flush=True)
+
+print("[SETUP] Loading node context CSV...", flush=True)
 node_context_df = pd.read_csv(NODE_CONTEXT_PATH)
+print(f"[SETUP] Loaded {len(node_context_df)} node context rows.", flush=True)
+
 edge_evidence = False
-
-
 
 
 def main():
     start_time = time.time()
+    print(f"[MODEL] Starting MCQ KG-RAG with {MODEL_NAME}", flush=True)
 
     # Use direct Transformers generation for Llama 3.2 1B.
     if MODEL_NAME == "meta-llama/Llama-3.2-1B-Instruct":
+        print("[MODEL] Loading tokenizer...", flush=True)
         tokenizer = AutoTokenizer.from_pretrained(
             MODEL_NAME,
             revision=BRANCH_NAME,
             cache_dir=CACHE_DIR
         )
+
+        print("[MODEL] Loading Llama model weights...", flush=True)
         model = AutoModelForCausalLM.from_pretrained(
             MODEL_NAME,
             revision=BRANCH_NAME,
@@ -54,22 +66,33 @@ def main():
             torch_dtype=torch.float32
         )
         model.eval()
+        print("[MODEL] Llama model loaded successfully.", flush=True)
     else:
         # Preserve the original pipeline for other models.
+        print("[MODEL] Loading Llama through original LangChain pipeline...", flush=True)
         llm = llama_model(MODEL_NAME, BRANCH_NAME, CACHE_DIR)
+        print("[MODEL] Llama pipeline loaded.", flush=True)
+
+        print("[MODEL] Preparing prompt and LLM chain...", flush=True)
         template = get_prompt(INSTRUCTION, SYSTEM_PROMPT)
         prompt = PromptTemplate(
             template=template,
             input_variables=["context", "question"]
         )
         llm_chain = LLMChain(prompt=prompt, llm=llm)
+        print("[MODEL] LLM chain ready.", flush=True)
 
+    print(f"[DATA] Loading questions from {QUESTION_PATH}...", flush=True)
     question_df = pd.read_csv(QUESTION_PATH)
+    print(f"[DATA] Loaded {len(question_df)} questions.", flush=True)
+
     answer_list = []
 
     for index, row in question_df.iterrows():
         question = row["text"]
+        print(f"\n[QUESTION {index + 1}/{len(question_df)}] Starting...", flush=True)
 
+        print(f"[QUESTION {index + 1}] Retrieving KG context...", flush=True)
         context = retrieve_context(
             question,
             vectorstore,
@@ -79,9 +102,15 @@ def main():
             QUESTION_VS_CONTEXT_SIMILARITY_PERCENTILE_THRESHOLD,
             QUESTION_VS_CONTEXT_MINIMUM_SIMILARITY,
             edge_evidence,
-            api=False,
+            api=True,
             local_entity_extraction=True
         )
+        print(
+            f"[QUESTION {index + 1}] Context retrieved: {len(context)} characters.",
+            flush=True
+        )
+
+        print(f"[QUESTION {index + 1}] Generating answer...", flush=True)
 
         if MODEL_NAME == "meta-llama/Llama-3.2-1B-Instruct":
             messages = [
@@ -125,25 +154,23 @@ def main():
         else:
             output = llm_chain.run(context=context, question=question)
 
-        print(f"Question {index + 1}: {output}")
+        print(f"[QUESTION {index + 1}] Answer generated: {output}", flush=True)
         answer_list.append((row["text"], row["correct_node"], output))
 
+    print("\n[SAVE] Writing results to CSV...", flush=True)
     answer_df = pd.DataFrame(
         answer_list,
         columns=["question", "correct_answer", "llm_answer"]
     )
+    output_path = os.path.join(SAVE_PATH, save_name)
     answer_df.to_csv(
-        os.path.join(SAVE_PATH, save_name),
+        output_path,
         index=False,
         header=True
     )
-    print("Completed in {} min".format((time.time() - start_time) / 60))
-
-
-
+    print(f"[SAVE] Results saved to {output_path}", flush=True)
+    print("Completed in {} min".format((time.time() - start_time) / 60), flush=True)
 
 
 if __name__ == "__main__":
     main()
-    
-    
